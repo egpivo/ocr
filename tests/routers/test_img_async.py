@@ -48,12 +48,10 @@ def test_extract_text_async_successful(positive_example_imgstring):
 
     assert response.status_code == 200
     result = response.json()
-    assert "job_id" in result
 
     # Retrieve the job_id from the background task
     background_task_job_id = mock_process_image.call_args[0][1]
-
-    assert result["job_id"] == background_task_job_id
+    assert result == background_task_job_id
 
 
 @pytest.mark.usefixtures("positive_example_imgstring")

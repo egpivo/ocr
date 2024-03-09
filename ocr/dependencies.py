@@ -5,6 +5,8 @@ import pytesseract
 from fastapi import HTTPException
 from PIL import Image
 
+from ocr.logger.logger import logger
+
 
 def extract_text_from_image(base64_str: str) -> str:
     try:
@@ -15,4 +17,5 @@ def extract_text_from_image(base64_str: str) -> str:
         extracted_text = pytesseract.image_to_string(image)
         return extracted_text
     except Exception as e:
+        logger.exception("Processing Error: %s", str(e))
         raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
