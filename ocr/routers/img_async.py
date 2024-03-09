@@ -1,7 +1,8 @@
 import asyncio
 
-from dependencies import extract_text_from_image
 from fastapi import APIRouter, BackgroundTasks, HTTPException
+
+from ocr.dependencies import extract_text_from_image
 
 router = APIRouter()
 
