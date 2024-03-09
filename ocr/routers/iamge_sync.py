@@ -8,9 +8,9 @@ router = APIRouter()
 
 
 @router.post("/imgsync", response_model=ImageResponse)
-def extract_text_sync(img_data: ImageRequest):
+def extract_text_sync(image_data: ImageRequest):
     try:
-        base64_image = img_data.data
+        base64_image = image_data.data
         if not base64_image:
             logger.error("Missing 'data' field in the request.")
             raise HTTPException(
