@@ -2,6 +2,7 @@ import uuid
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 
+from ocr.core.schemas.image import ImageRequest, JobStatusResponse
 from ocr.dependencies import extract_text_from_image
 from ocr.logger.logger import logger
 
@@ -24,10 +25,10 @@ async def process_image_async(base64_image: str, job_id: str) -> str:
         )
 
 
-@router.post("/imgasync")
-async def extract_text_async(img_data: dict, background_tasks: BackgroundTasks) -> str:
+@router.post("/imgasync", response_model=JobStatusResponse)
+async def extract_text_async(img_data: ImageRequest, background_tasks: BackgroundTasks):
     try:
-        base64_image = img_data.get("data", "")
+        base64_image = img_data.data
         if not base64_image:
             logger.error("Missing 'data' field in the request.")
             raise HTTPException(
@@ -37,7 +38,7 @@ async def extract_text_async(img_data: dict, background_tasks: BackgroundTasks) 
         job_id = str(uuid.uuid4())
         # Schedule the image processing in the background
         background_tasks.add_task(process_image_async, base64_image, job_id)
-        return job_id
+        return JobStatusResponse(job_id=job_id, status="processing", result=None)
     except HTTPException as e:
         raise e
     except Exception as e:

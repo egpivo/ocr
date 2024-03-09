@@ -3,15 +3,18 @@
 - This document provides instructions on building, running, and using the OCR web service.
 
 ## Table of Contents
-- [Building the OCR Web Service](##building-the-ocr-web-service)
-  - [Prerequisites](###prerequisites)
-  - [Instructions](###instructions)
-- [Running the OCR Web Service](##running-the-ocr-web-service)
-  - [Instructions](##instructions-1)
-- [Using the OCR Web Service](##using-the-ocr-web-service)
-  - [Synchronous Endpoint (imgsync)](###synchronous-endpoint-imgsync)
-  - [Asynchronous Endpoint (imgasync)](###asynchronous-endpoint-imgasync)
-  - [Check Job Status](###check-job-status)
+- [Building the OCR Web Service](#building-the-ocr-web-service)
+  - [Prerequisites](#prerequisites)
+  - [Instructions](#instructions)
+- [Running the OCR Web Service](#running-the-ocr-web-service)
+  - [Instructions](#instructions-1)
+- [Using the OCR Web Service](#using-the-ocr-web-service)
+  - [Synchronous Endpoint (imgsync)](#synchronous-endpoint-imgsync)
+  - [Asynchronous Endpoint (imgasync)](#asynchronous-endpoint-imgasync)
+  - [Check Job Status](#check-job-status)
+- [Docker](#docker)
+  - [Building the Docker Image](#building-the-docker-image)
+  - [Running the Docker Container](#running-the-docker-container)
 
 ## Building the OCR Web Service
 ### Prerequisites

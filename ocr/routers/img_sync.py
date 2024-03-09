@@ -1,15 +1,16 @@
 from fastapi import APIRouter, HTTPException
 
+from ocr.core.schemas.image import ImageRequest, ImageResponse
 from ocr.dependencies import extract_text_from_image
 from ocr.logger.logger import logger
 
 router = APIRouter()
 
 
-@router.post("/imgsync")
-def extract_text_sync(img_data: dict):
+@router.post("/imgsync", response_model=ImageResponse)
+def extract_text_sync(img_data: ImageRequest):
     try:
-        base64_image = img_data.get("data", "")
+        base64_image = img_data.data
         if not base64_image:
             logger.error("Missing 'data' field in the request.")
             raise HTTPException(
@@ -17,7 +18,7 @@ def extract_text_sync(img_data: dict):
             )
 
         extracted_text = extract_text_from_image(base64_image)
-        return {"extracted_text": extracted_text}
+        return extracted_text
     except HTTPException as e:
         raise e
     except Exception as e:
