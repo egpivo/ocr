@@ -12,9 +12,7 @@
   - [Synchronous Endpoint (imgsync)](#synchronous-endpoint-imgsync)
   - [Asynchronous Endpoint (imgasync)](#asynchronous-endpoint-imgasync)
   - [Check Job Status](#check-job-status)
-- [Docker](#docker)
-  - [Building the Docker Image](#building-the-docker-image)
-  - [Running the Docker Container](#running-the-docker-container)
+- [Reference: Commands in Makefile](#reference-command-in-makefile)
 
 ## Building the OCR Web Service
 ### Prerequisites
@@ -87,3 +85,9 @@
      "result": "result_text"
    }
    ```
+## Reference: Commands in Makefile
+1. `make clean`: Removes Python compiled files and cache locally.
+2. `make install`: Installs project dependencies locally.
+3. `make run`: Runs the OCR web service using Uvicorn locally.
+4. `make test`: Runs the tests using pytest locally.
+5. `make docker-run`: Builds a Docker image for the OCR web service and runs it.

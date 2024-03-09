@@ -15,7 +15,7 @@ ENV POETRY_HOME=/root/.poetry \
 WORKDIR /ocr
 
 RUN apt-get update \
-    && apt-get install -y build-essential \
+    && apt-get install -y build-essential tesseract-ocr libtesseract-dev \
     && pip install --no-cache-dir poetry==${POETRY_VERSION} \
     && poetry config installer.max-workers 10
 
@@ -40,8 +40,10 @@ COPY --from=builder /ocr/.venv ./.venv
 COPY --from=builder /ocr/ocr/main.py ./ocr/main.py
 COPY --from=builder /ocr/dist/ .
 
-# Install application dependencies
-RUN ./.venv/bin/pip install *.whl
+# Install Tesseract and application dependencies
+RUN apt-get update \
+    && apt-get install -y tesseract-ocr \
+    && ./.venv/bin/pip install *.whl
 
 # Entry point to run the application
 CMD [".venv/bin/uvicorn", "ocr.main:app", "--host", "0.0.0.0", "--port", "8000"]
