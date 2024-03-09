@@ -15,6 +15,7 @@
 - [Reference](#reference)
   - [Commands in Makefile](#command-in-makefile)
   - [Core Hierarchy](#core-hierarchy)
+  - [Demo](#demo)
 
 ## Building the OCR Web Service
 ### Prerequisites
@@ -41,7 +42,7 @@
 
 2. Access the Swagger Documentation:
 - Visit http://localhost:8000/docs in your web browser to access the interactive Swagger documentation. This provides details on the available endpoints, request formats, and response structures.
-
+![Swagger Documentation](assets/snapshot-swagger-doc.jpg)
 
 ## Using the OCR Web Service
 - The OCR web service provides both synchronous and asynchronous endpoints for text extraction from images.
@@ -57,7 +58,7 @@
 - Response:
    ```json
    {
-     "extracted_text": "result_text"
+     "extracted_text": "extracted_text"
    }
    ```
 
@@ -82,9 +83,9 @@
 - Response:
    ```json
    {
-     "job_id": "job_id",,
+     "job_id": "job_id",
      "status": "completed",
-     "result": "result_text"
+     "extracted_text": "extracted_text"
    }
    ```
 ## Reference
@@ -115,4 +116,18 @@ ocr
     ├── __init__.py
     ├── image_sync.py
     └── image_async.py
+    └── utils.py
 ```
+
+### Demo by Swagger UI
+1. `/imgsync`
+- Input an encoded image data, get the result as
+![Swagger Documentation](assets/imgsync.jpg)
+
+2. `/imgasync`
+- Input an encoded image data, get the result as
+![Swagger Documentation](assets/imgsync.jpg)
+
+3. `/imgasync/job/`
+- Based on the `job_id` from `/imgasync`, we have
+![Swagger Documentation](assets/get-jobid.jpg)
