@@ -13,8 +13,6 @@ def test_extract_text_from_image_success(positive_example_imgstring, expected_re
     # Test with a valid base64 string
     response = client.post("/imgsync", json=image_request.dict())
 
-    print(response.content)  # Add this line to print the response content
-
     assert response.status_code == 200
     result = response.json()
 

@@ -18,7 +18,7 @@ def extract_text_sync(img_data: ImageRequest):
             )
 
         extracted_text = extract_text_from_image(base64_image)
-        return extracted_text
+        return ImageResponse(extracted_text=extracted_text)
     except HTTPException as e:
         raise e
     except Exception as e:

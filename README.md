@@ -82,6 +82,7 @@
 - Response:
    ```json
    {
+     "job_id": "job_id",,
      "status": "completed",
      "result": "result_text"
    }

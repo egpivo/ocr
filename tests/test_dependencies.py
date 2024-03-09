@@ -25,4 +25,4 @@ def test_extract_text_from_image(
     result = extract_text_from_image(positive_example_imgstring)
 
     # Check if the result matches the expected result
-    assert result.extracted_text == expected_result
+    assert result == expected_result

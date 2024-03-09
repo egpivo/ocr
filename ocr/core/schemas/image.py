@@ -16,8 +16,6 @@ class BatchImageRequest(BaseModel):
 
 
 class JobStatusResponse(BaseModel):
-    job_id: Optional[
-        str
-    ]  # Make the job_id optional since it might not be available immediately
+    job_id: Optional[str]
     status: str
-    result: Optional[dict]  # Include result as optional if it's not available yet
+    extracted_text: Optional[str]

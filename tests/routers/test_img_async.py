@@ -1,10 +1,11 @@
 import asyncio
+import uuid
 from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
 
-from ocr.core.schemas.image import ImageRequest
+from ocr.core.schemas.image import ImageRequest, JobStatusResponse
 from ocr.main import app
 from ocr.routers.img_async import job_results, process_image_async
 
@@ -21,7 +22,7 @@ def test_process_image_async_successful(positive_example_imgstring):
 
     assert result == "Test Result"
     assert job_results[job_id]["status"] == "completed"
-    assert job_results[job_id]["result"] == "Test Result"
+    assert job_results[job_id]["extracted_text"] == "Test Result"
 
 
 @pytest.mark.usefixtures("positive_example_imgstring")
@@ -37,16 +38,15 @@ def test_process_image_async_failed(positive_example_imgstring):
     assert "error" in job_results[job_id]
 
 
-import uuid
-
-
 @pytest.mark.usefixtures("positive_example_imgstring")
 def test_extract_text_async_successful(positive_example_imgstring):
     image_request = ImageRequest(data=positive_example_imgstring)
     with patch("ocr.routers.img_async.process_image_async") as mock_process_image:
         # Generate a unique job_id for the mock return value
         unique_job_id = str(uuid.uuid4())
-        mock_process_image.return_value = unique_job_id
+        mock_process_image.return_value = JobStatusResponse(
+            job_id=unique_job_id, status="processing", extracted_text=None
+        )
 
         response = client.post("/imgasync", json=image_request.dict())
 
@@ -69,19 +69,29 @@ def test_extract_text_async_missing_data_field(positive_example_imgstring):
 @pytest.mark.usefixtures("positive_example_imgstring")
 def test_get_job_result_completed_job(positive_example_imgstring):
     job_id = "completed_job_id"
-    job_results[job_id] = {"status": "completed", "result": "Test Result"}
+    # Updated job_results to include "job_id" field
+    job_results[job_id] = {"status": "completed", "extracted_text": "Test Result"}
 
     response = client.get(f"/imgasync/job/{job_id}")
+
     assert response.status_code == 200
     result = response.json()
     assert result["status"] == "completed"
-    assert result["result"] == "Test Result"
+    assert result["extracted_text"] == "Test Result"
+    assert result["job_id"] == job_id  # Ensure "job_id" is present in the response
 
 
 @pytest.mark.usefixtures("positive_example_imgstring")
 def test_get_job_result_pending_job(positive_example_imgstring):
     job_id_pending = "pending_job_id"
+
+    # Updated job_results to include "job_id" and "extracted_text" fields
+    job_results[job_id_pending] = {"status": "pending", "extracted_text": None}
+
     response_pending = client.get(f"/imgasync/job/{job_id_pending}")
+
     assert response_pending.status_code == 200
     result_pending = response_pending.json()
     assert result_pending["status"] == "pending"
+    assert result_pending["job_id"] == job_id_pending
+    assert result_pending["extracted_text"] is None
