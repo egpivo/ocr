@@ -5,7 +5,7 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException
 from ocr.core.job_manager import JobResultsManager
 from ocr.core.schemas.image import ImageRequest, JobStatusResponse
 from ocr.dependencies import extract_text_from_image
-from ocr.logger.logger import logger
+from ocr.routers.utils import handle_errors_and_logging
 
 router = APIRouter()
 
@@ -17,7 +17,7 @@ async def process_image_async(base64_image: str, job_id: str) -> str:
         return extracted_text
     except Exception as e:
         JobResultsManager.update(job_id, "failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+        handle_errors_and_logging(e, status_code=500, detail="Internal Server Error")
 
 
 @router.post("/imgasync", response_model=JobStatusResponse)
@@ -27,10 +27,10 @@ async def extract_text_async(
     try:
         base64_image = image_data.data
         if not base64_image:
-            logger.error("Missing 'data' field in the request.")
-            raise HTTPException(
-                status_code=400, detail="Missing 'data' field in the request."
+            handle_errors_and_logging(
+                None, status_code=400, detail="Missing 'data' field in the request."
             )
+
         # Generate a unique job_id
         job_id = str(uuid.uuid4())
         # Schedule the image processing in the background
@@ -44,8 +44,7 @@ async def extract_text_async(
     except HTTPException as e:
         raise e
     except Exception as e:
-        logger.exception(f"Internal Server Error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+        handle_errors_and_logging(e, status_code=500, detail="Internal Server Error")
 
 
 @router.get("/imgasync/job/{job_id}", response_model=JobStatusResponse)
@@ -60,5 +59,4 @@ async def get_job_result(job_id: str):
         # Return JobStatusResponse with the result
         return JobStatusResponse(job_id=job_id, **result)
     except Exception as e:
-        logger.error(f"Error getting job result: {str(e)}")  # Log the error
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        handle_errors_and_logging(e, status_code=500, detail="Internal Server Error")
