@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from ocr.routers.iamge_sync import router as sync_router
 from ocr.routers.image_async import router as async_router
+from ocr.routers.image_sync import router as sync_router
 
 app = FastAPI()
 
