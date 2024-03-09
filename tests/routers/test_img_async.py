@@ -66,7 +66,7 @@ def test_get_job_result_completed_job(positive_example_imgstring):
     job_id = "completed_job_id"
     job_results[job_id] = {"status": "completed", "result": "Test Result"}
 
-    response = client.get(f"/job/{job_id}")
+    response = client.get(f"/imgasync/job/{job_id}")
     assert response.status_code == 200
     result = response.json()
     assert result["status"] == "completed"
@@ -76,7 +76,7 @@ def test_get_job_result_completed_job(positive_example_imgstring):
 @pytest.mark.usefixtures("positive_example_imgstring")
 def test_get_job_result_pending_job(positive_example_imgstring):
     job_id_pending = "pending_job_id"
-    response_pending = client.get(f"/job/{job_id_pending}")
+    response_pending = client.get(f"/imgasync/job/{job_id_pending}")
     assert response_pending.status_code == 200
     result_pending = response_pending.json()
     assert result_pending["status"] == "pending"

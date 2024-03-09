@@ -45,7 +45,7 @@ async def extract_text_async(img_data: dict, background_tasks: BackgroundTasks) 
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 
-@router.get("/job/{job_id}")
+@router.get("/imgasync/job/{job_id}")
 async def get_job_result(job_id: str):
     try:
         # Retrieve the result or status of the job from the in-memory storage
