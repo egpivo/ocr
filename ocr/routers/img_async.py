@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 
@@ -10,8 +11,17 @@ router = APIRouter()
 job_results = {}
 
 
-async def process_image_async(base64_image: str) -> str:
-    return extract_text_from_image(base64_image)
+async def process_image_async(base64_image: str, job_id: str) -> str:
+    try:
+        result = extract_text_from_image(base64_image)  # Call synchronously
+        job_results[job_id] = {"status": "completed", "result": result}
+        return result
+    except Exception as e:
+        job_results[job_id] = {"status": "failed", "error": str(e)}
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal Server Error: {str(e)}",
+        )
 
 
 @router.post("/imgasync")
@@ -23,10 +33,12 @@ async def extract_text_async(img_data: dict, background_tasks: BackgroundTasks):
                 status_code=400, detail="Missing 'data' field in the request."
             )
 
-        # Schedule the image processing in the background and return a job ID
-        job_id = await run_in_background(
-            background_tasks, process_image_async, base64_image
-        )
+        # Generate a unique job_id
+        job_id = str(uuid.uuid4())
+
+        # Schedule the image processing in the background
+        background_tasks.add_task(process_image_async, base64_image, job_id)
+
         return {"job_id": job_id}
     except HTTPException as e:
         raise e
@@ -38,27 +50,12 @@ async def extract_text_async(img_data: dict, background_tasks: BackgroundTasks):
 async def get_job_result(job_id: str):
     try:
         # Retrieve the result or status of the job from the in-memory storage
-        if job_id in job_results:
-            return job_results[job_id]
-        else:
-            return {"status": "pending"}
+        return job_results.get(job_id, {"status": "pending"})
     except Exception as e:
         print(f"Error getting job result: {str(e)}")  # Log the error
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-async def run_in_background(background_tasks: BackgroundTasks, func, *args, **kwargs):
-    loop = asyncio.get_event_loop()
-    job_id = str(hash((func, args, frozenset(kwargs.items()))))
-    task = loop.create_task(run_function(job_id, func, *args, **kwargs))
-    background_tasks.add_task(lambda: task)
-    return job_id
-
-
-async def run_function(job_id, func, *args, **kwargs):
-    try:
-        result = await func(*args, **kwargs)
-        # Store the result in the in-memory storage
-        job_results[job_id] = {"status": "completed", "result": result}
-    except Exception as e:
-        job_results[job_id] = {"status": "failed", "error": str(e)}
+# Make sure to run the event loop to execute the background task
+async def run_background_tasks(background_tasks: BackgroundTasks):
+    await asyncio.gather(*[task() for task in background_tasks.tasks])
