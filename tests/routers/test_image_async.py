@@ -5,9 +5,10 @@ from unittest.mock import patch
 import pytest
 from fastapi.testclient import TestClient
 
+from ocr.core.job_manager import job_results, job_results_lock
 from ocr.core.schemas.image import ImageRequest, JobStatusResponse
 from ocr.main import app
-from ocr.routers.image_async import job_results, job_results_lock, process_image_async
+from ocr.routers.image_async import process_image_async
 
 client = TestClient(app)
 
