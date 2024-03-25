@@ -31,13 +31,12 @@ async def extract_text_async(
                 None, status_code=400, detail="Missing 'data' field in the request."
             )
 
-        # Generate a unique job_id
+        # Generate a unique job_id --> string
         job_id = str(uuid.uuid4())
         # Schedule the image processing in the background
         background_tasks.add_task(process_image_async, base64_image, job_id)
 
         # Check if extract_text_from_image returns a string or ImageResponse
-        extract_text_from_image(base64_image)
         return JobStatusResponse(
             job_id=job_id, status="processing", extracted_text=None
         )

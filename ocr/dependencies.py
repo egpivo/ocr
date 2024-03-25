@@ -9,10 +9,14 @@ from PIL import Image, UnidentifiedImageError
 from ocr.logger.logger import logger
 
 
+def convert_baseb4_str(base64_str: str) -> bytes:
+    image_bytes = base64.b64decode(base64_str)
+    return Image.open(io.BytesIO(image_bytes))
+
+
 def is_valid_image(base64_str: bytes) -> bool:
     try:
-        image_bytes = base64.b64decode(base64_str)
-        Image.open(io.BytesIO(image_bytes))
+        _ = convert_baseb4_str(base64_str)
         return True
     except (BinasciiError, UnidentifiedImageError):
         return False
@@ -23,8 +27,7 @@ def extract_text_from_image(base64_str: str) -> str:
         raise HTTPException(status_code=400, detail="Invalid image format.")
 
     try:
-        image_bytes = base64.b64decode(base64_str)
-        image = Image.open(io.BytesIO(image_bytes))
+        image = convert_baseb4_str(base64_str)
         extracted_text = pytesseract.image_to_string(image)
         return extracted_text
     except (BinasciiError, UnidentifiedImageError, HTTPException) as e:
