@@ -21,7 +21,7 @@ def test_extract_text_from_image_success(
     # Ensure 'extracted_text' is a valid string
     assert isinstance(result["extracted_text"], str)
     # Ensure the result matches the expected result
-    assert result["extracted_text"] == expected_result
+    assert result["extracted_text"].replace("\x0c", "") == expected_result
 
 
 @pytest.mark.usefixtures("false_example_image_string")

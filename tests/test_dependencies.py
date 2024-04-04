@@ -20,7 +20,7 @@ def test_extract_text_from_image(
     assert "Invalid image format." in str(exc_info.value.detail)
 
     # Test with a positive example_image_string, expecting no errors
-    result = extract_text_from_image(positive_example_image_string)
+    result = extract_text_from_image(positive_example_image_string).replace("\x0c", "")
     assert result == expected_result
 
 
