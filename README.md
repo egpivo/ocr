@@ -1,6 +1,8 @@
 # OCR Web Service
-
-- This document provides instructions on building, running, and using the OCR web service.
+# LLM-Chatbot
+<p align="center">
+  <a href="https://github.com/egpivo/ocr/actions"><img src="https://github.com/egpivo/ocr/workflows/Test/badge.svg"/></a>
+</p>
 
 ## Table of Contents
 - [Building the OCR Web Service](#building-the-ocr-web-service)
