@@ -26,8 +26,8 @@ jobs:
           poetry install
           python -m pip install flake8
           # Install Tesseract OCR
-          apt-get update
-          apt-get install tesseract-ocr -y
+          sudo apt-get update
+          sudo apt-get install tesseract-ocr -y  # Use sudo to install with elevated privileges
       - name: Test with pytest
         run: |
           poetry run pytest --cov ./ --cov-report=xml
