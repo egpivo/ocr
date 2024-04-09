@@ -1,6 +1,5 @@
 # OCR Web Service
-# LLM-Chatbot
-<p align="center">
+<p align="left">
   <a href="https://github.com/egpivo/ocr/actions"><img src="https://github.com/egpivo/ocr/workflows/Test/badge.svg"/></a>
 </p>
 
